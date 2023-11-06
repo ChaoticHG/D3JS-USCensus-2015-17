@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <head>
   <title>Choropleth Map</title>
   <style>
     /* Map styling */
-    
-    #barGraphTitle{
+
+    #barGraphTitle {
       width: 40%;
       float: left;
       font-size: 18px;
       font-weight: bold;
       text-align: center;
     }
-    #mapTitle{
+    #mapTitle {
       width: 60%;
       float: left;
       font-size: 18px;
@@ -24,7 +24,8 @@
       height: 400px;
       pointer-events: all;
       float: right;
-    }.selected {
+    }
+    .selected {
       fill: red;
     }
 
@@ -32,13 +33,16 @@
       width: 50%;
       height: 400px;
       float: left;
-    }.x-axis-svg {
+    }
+    .x-axis-svg {
       position: sticky;
       bottom: 0;
       z-index: 1;
-    }.selected {
+    }
+    .selected {
       fill: red;
-    }.tooltip {
+    }
+    .tooltip {
       position: absolute;
     }
     #statusLabel {
@@ -55,8 +59,8 @@
     #transportRadarContainer,
     #worksectorRadarContainer,
     #genderBarchartContainer {
-      width: 25%;
-      height: 400px;
+      width: 20%;
+      height: 250px;
       float: left;
       text-align: center;
     }
@@ -70,14 +74,12 @@
       font-weight: bold;
       margin-bottom: 10px;
     }
-
-    
   </style>
-  <link rel="stylesheet" type="text/css" href="slider.css">
+  <link rel="stylesheet" type="text/css" href="slider.css" />
 </head>
 <body>
-  <input type="radio" name="year" value="2015" checked> 2015
-  <input type="radio" name="year" value="2017"> 2017
+  <input type="radio" name="year" value="2015" checked /> 2015
+  <input type="radio" name="year" value="2017" /> 2017
   <div id="barGraphTitle">Average Income of All State</div>
   <div id="mapTitle">Population Across all State</div>
   <select id="sort-select">
@@ -125,110 +127,168 @@
     function handleCompleteData(completeData) {
       // Use the completeData as needed
       //console.log('handle complete data triggered')
-      const incomeData = d3.group(completeData, d => d.state);
+      const incomeData = d3.group(completeData, (d) => d.state);
       const displayData = [];
-    
+
       const combinedData = Array.from(incomeData.values());
-    
+
       const totalData = {
-        avgIncome: d3.sum(combinedData, d => d3.sum(d, e => +e.avgIncome)) / d3.sum(combinedData, d => d.length),
-        totalPopulation: d3.sum(combinedData, d => d3.sum(d, e => +e.totalPopulation)),
-        povertyRate: d3.sum(combinedData, d => d3.sum(d, e => +e.povertyRate)) / d3.sum(combinedData, d => d.length)
+        avgIncome:
+          d3.sum(combinedData, (d) => d3.sum(d, (e) => +e.avgIncome)) /
+          d3.sum(combinedData, (d) => d.length),
+        totalPopulation: d3.sum(combinedData, (d) =>
+          d3.sum(d, (e) => +e.totalPopulation)
+        ),
+        povertyRate:
+          d3.sum(combinedData, (d) => d3.sum(d, (e) => +e.povertyRate)) /
+          d3.sum(combinedData, (d) => d.length),
       };
-    
+
       displayData.push(totalData);
-      statusLabel.html("Aggregated Display of All State" + "<br>Average Income : " + displayData[0].avgIncome.toFixed(2) + "<br>Total Population : " + displayData[0].totalPopulation + "<br>Poverty rate : " + displayData[0].povertyRate.toFixed(2));
-      choroplethmap.generateMap(completeData)
-      raceRadar = raceRadargraphdefault(completeData)
-      employmentRadar = employmentRadargraphdefault(completeData)
-      transportRadar = transportRadargraphdefault(completeData)
-      worksectorRadar = worksectorRadargraphdefault(completeData)
-      raceBarChart = raceBarChart(completeData)
+      statusLabel.html(
+        "Aggregated Display of All State" +
+          "<br>Average Income : " +
+          displayData[0].avgIncome.toFixed(2) +
+          "<br>Total Population : " +
+          displayData[0].totalPopulation +
+          "<br>Poverty rate : " +
+          displayData[0].povertyRate.toFixed(2)
+      );
+      choroplethmap.generateMap(completeData);
+      raceRadar = raceRadargraphdefault(completeData);
+      employmentRadar = employmentRadargraphdefault(completeData);
+      transportRadar = transportRadargraphdefault(completeData);
+      worksectorRadar = worksectorRadargraphdefault(completeData);
+      raceBarChart = raceBarChart(completeData);
       // Call other functions with the completeData
       // Example: displayBarGraph(completeData);
     }
-    
+
     // Listen for the custom event
-    document.addEventListener('customEventName', function(event) {
+    document.addEventListener("customEventName", function (event) {
       // Handle the custom event here
       //console.log('Custom event triggered');
       //console.log('Selected state:', event.detail.selectedState);
-      statusLabel.html("Display of " + event.detail.selectedState.state  + "<br>Average Income : " + event.detail.selectedState.avgIncome.toFixed(2) + "<br>Total Population : " + event.detail.selectedState.totalPopulation + "<br>Poverty rate : " + event.detail.selectedState.povertyRate.toFixed(2));
-      choroplethmap.selectedState(event.detail.selectedState.state)
-      raceRadar.updateRadarChart(event.detail.selectedState)
-      employmentRadar.updateRadarChart(event.detail.selectedState)
-      transportRadar.updateRadarChart(event.detail.selectedState)
-      worksectorRadar.updateRadarChart(event.detail.selectedState)
-      raceBarChart.updateBarChart(event.detail.selectedState)
+      statusLabel.html(
+        "Display of " +
+          event.detail.selectedState.state +
+          "<br>Average Income : " +
+          event.detail.selectedState.avgIncome.toFixed(2) +
+          "<br>Total Population : " +
+          event.detail.selectedState.totalPopulation +
+          "<br>Poverty rate : " +
+          event.detail.selectedState.povertyRate.toFixed(2)
+      );
+      choroplethmap.selectedState(event.detail.selectedState.state);
+      raceRadar.updateRadarChart(event.detail.selectedState);
+      employmentRadar.updateRadarChart(event.detail.selectedState);
+      transportRadar.updateRadarChart(event.detail.selectedState);
+      worksectorRadar.updateRadarChart(event.detail.selectedState);
+      raceBarChart.updateBarChart(event.detail.selectedState);
     });
 
-    document.addEventListener('resetEventName', function(event) {
+    document.addEventListener("resetEventName", function (event) {
       // Handle the custom event here
       //console.log('Reset event triggered');
       //console.log('Selected state:', event.detail.selectedState);
-      const incomeData = d3.group(event.detail.selectedState, d => d.state);
+      const incomeData = d3.group(event.detail.selectedState, (d) => d.state);
       const displayData = [];
-    
+
       const combinedData = Array.from(incomeData.values());
-    
+
       const totalData = {
-        avgIncome: d3.sum(combinedData, d => d3.sum(d, e => +e.avgIncome)) / d3.sum(combinedData, d => d.length),
-        totalPopulation: d3.sum(combinedData, d => d3.sum(d, e => +e.totalPopulation)),
-        povertyRate: d3.sum(combinedData, d => d3.sum(d, e => +e.povertyRate)) / d3.sum(combinedData, d => d.length)
+        avgIncome:
+          d3.sum(combinedData, (d) => d3.sum(d, (e) => +e.avgIncome)) /
+          d3.sum(combinedData, (d) => d.length),
+        totalPopulation: d3.sum(combinedData, (d) =>
+          d3.sum(d, (e) => +e.totalPopulation)
+        ),
+        povertyRate:
+          d3.sum(combinedData, (d) => d3.sum(d, (e) => +e.povertyRate)) /
+          d3.sum(combinedData, (d) => d.length),
       };
-    
+
       displayData.push(totalData);
-      statusLabel.html("Aggregated Display of All State" + "<br>Average Income : " + displayData[0].avgIncome.toFixed(2) + "<br>Total Population : " + displayData[0].totalPopulation + "<br>Poverty rate : " + displayData[0].povertyRate.toFixed(2));
-      choroplethmap.resetState()
-      raceRadar.resetRadarChart(event.detail.selectedState)
-      employmentRadar.resetRadarChart(event.detail.selectedState)
-      transportRadar.resetRadarChart(event.detail.selectedState)
-      worksectorRadar.resetRadarChart(event.detail.selectedState)
-      raceBarChart.resetBarChart(event.detail.selectedState)
+      statusLabel.html(
+        "Aggregated Display of All State" +
+          "<br>Average Income : " +
+          displayData[0].avgIncome.toFixed(2) +
+          "<br>Total Population : " +
+          displayData[0].totalPopulation +
+          "<br>Poverty rate : " +
+          displayData[0].povertyRate.toFixed(2)
+      );
+      choroplethmap.resetState();
+      raceRadar.resetRadarChart(event.detail.selectedState);
+      employmentRadar.resetRadarChart(event.detail.selectedState);
+      transportRadar.resetRadarChart(event.detail.selectedState);
+      worksectorRadar.resetRadarChart(event.detail.selectedState);
+      raceBarChart.resetBarChart(event.detail.selectedState);
     });
 
-    document.addEventListener('selectBarEventName', function(event) {
+    document.addEventListener("selectBarEventName", function (event) {
       // Handle the custom event here
       //console.log('Select Bar event triggered');
       //console.log('Selected state:', event.detail.selectedState);
-      statusLabel.html("Display of " + event.detail.selectedState.state  + "<br>Average Income : " + event.detail.selectedState.avgIncome.toFixed(2) + "<br>Total Population : " + event.detail.selectedState.totalPopulation + "<br>Poverty rate : " + event.detail.selectedState.povertyRate.toFixed(2));
-      barGraph.selectedState(event.detail.selectedState.state)
-      raceRadar.updateRadarChart(event.detail.selectedState)
-      employmentRadar.updateRadarChart(event.detail.selectedState)
-      transportRadar.updateRadarChart(event.detail.selectedState)
-      worksectorRadar.updateRadarChart(event.detail.selectedState)
-      raceBarChart.updateBarChart(event.detail.selectedState)
+      statusLabel.html(
+        "Display of " +
+          event.detail.selectedState.state +
+          "<br>Average Income : " +
+          event.detail.selectedState.avgIncome.toFixed(2) +
+          "<br>Total Population : " +
+          event.detail.selectedState.totalPopulation +
+          "<br>Poverty rate : " +
+          event.detail.selectedState.povertyRate.toFixed(2)
+      );
+      barGraph.selectedState(event.detail.selectedState.state);
+      raceRadar.updateRadarChart(event.detail.selectedState);
+      employmentRadar.updateRadarChart(event.detail.selectedState);
+      transportRadar.updateRadarChart(event.detail.selectedState);
+      worksectorRadar.updateRadarChart(event.detail.selectedState);
+      raceBarChart.updateBarChart(event.detail.selectedState);
     });
 
-    document.addEventListener('resetBarEventName', function(event) {
+    document.addEventListener("resetBarEventName", function (event) {
       // Handle the custom event here
       //console.log('Reset Bar event triggered');
       //console.log('Selected state:', event.detail.selectedState);
-      const incomeData = d3.group(event.detail.selectedState, d => d.state);
+      const incomeData = d3.group(event.detail.selectedState, (d) => d.state);
       const displayData = [];
-    
+
       const combinedData = Array.from(incomeData.values());
-    
+
       const totalData = {
-        avgIncome: d3.sum(combinedData, d => d3.sum(d, e => +e.avgIncome)) / d3.sum(combinedData, d => d.length),
-        totalPopulation: d3.sum(combinedData, d => d3.sum(d, e => +e.totalPopulation)),
-        povertyRate: d3.sum(combinedData, d => d3.sum(d, e => +e.povertyRate)) / d3.sum(combinedData, d => d.length)
+        avgIncome:
+          d3.sum(combinedData, (d) => d3.sum(d, (e) => +e.avgIncome)) /
+          d3.sum(combinedData, (d) => d.length),
+        totalPopulation: d3.sum(combinedData, (d) =>
+          d3.sum(d, (e) => +e.totalPopulation)
+        ),
+        povertyRate:
+          d3.sum(combinedData, (d) => d3.sum(d, (e) => +e.povertyRate)) /
+          d3.sum(combinedData, (d) => d.length),
       };
-    
+
       displayData.push(totalData);
-      statusLabel.html("Aggregated Display of All State" + "<br>Average Income : " + displayData[0].avgIncome.toFixed(2) + "<br>Total Population : " + displayData[0].totalPopulation + "<br>Poverty rate : " + displayData[0].povertyRate.toFixed(2));
-      barGraph.resetState()
-      raceRadar.resetRadarChart(event.detail.selectedState)
-      employmentRadar.resetRadarChart(event.detail.selectedState)
-      transportRadar.resetRadarChart(event.detail.selectedState)
-      worksectorRadar.resetRadarChart(event.detail.selectedState)
-      raceBarChart.resetBarChart(event.detail.selectedState)
+      statusLabel.html(
+        "Aggregated Display of All State" +
+          "<br>Average Income : " +
+          displayData[0].avgIncome.toFixed(2) +
+          "<br>Total Population : " +
+          displayData[0].totalPopulation +
+          "<br>Poverty rate : " +
+          displayData[0].povertyRate.toFixed(2)
+      );
+      barGraph.resetState();
+      raceRadar.resetRadarChart(event.detail.selectedState);
+      employmentRadar.resetRadarChart(event.detail.selectedState);
+      transportRadar.resetRadarChart(event.detail.selectedState);
+      worksectorRadar.resetRadarChart(event.detail.selectedState);
+      raceBarChart.resetBarChart(event.detail.selectedState);
     });
 
     // Call the firstgraph function with the callback
     barGraph = firstgraph(handleCompleteData);
-    choroplethmap=choroplethmap();
-    
+    choroplethmap = choroplethmap();
   </script>
 </body>
-</html>
